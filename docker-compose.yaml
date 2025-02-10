@@ -4,74 +4,74 @@ services:
       context: ./frontend
       dockerfile: DockerfileFrontendJFPP
     ports:
-     - "3000:3000"
+      - "3000:3000"
     volumes:
-     - ./frontend:/app
-     - /app/node_modules
+      - ./frontend:/app
+      - /app/node_modules
     environment:
-     - CHOKIDAR_USEPOLLING=true # Activa polling para asegurar detección de cambios en Docker
+      - CHOKIDAR_USEPOLLING=true # Activa polling para asegurar detección de cambios en Docker
     depends_on:
-     - backend
+      - backend
     networks:
-     - app-network
+      - app-network
 
   backend:
     build:
       context: ./backend
       dockerfile: DockerfileBackendJFPP
     ports:
-     - "8000:8000"
+      - "8000:8000"
     volumes:
-     - ./backend:/app
+      - ./backend:/app
     depends_on:
-     - database
+      - database
     command: >
       sh -c "
       composer install &&
       composer show doctrine/dbal &&
       php -S 0.0.0.0:8000 -t public"
     networks:
-     - app-network
+      - app-network
 
   database:
     image: mysql:8.0
     ports:
-     - "33065:3306"
+      - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: passJFPP
-      MYSQL_DATABASE: JFPP_BD
-      MYSQL_USER: alumnoDAW
-      MYSQL_PASSWORD: passJFPP
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=JFPP_BD
+      - MYSQL_USER=alumnoDAW
+      - MYSQL_PASSWORD=passJFPP
     volumes:
-     - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-     - database_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - database_data:/var/lib/mysql
     networks:
-     - app-network
+      - app-network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
-     - "8080:80"
+      - "8080:80"
     environment:
-      PMA_HOST: database
-      PMA_USER: alumnoDAW
-      PMA_PASSWORD: passJFPP
+      - PMA_HOST=database
+      - PMA_USER=alumnoDAW
+      - PMA_PASSWORD=passJFPP
     depends_on:
-     - database
+      - database
     networks:
-     - app-network
+      - app-network
 
   web:
     build:
       context: ./web
       dockerfile: DockerfileWebJFPP
     ports:
-     - "8020:80"
+      - "8020:80"
     depends_on:
-     - frontend
-     - backend
+      - frontend
+      - backend
     networks:
-     - app-network
+      - app-network
 
 networks:
   app-network:
